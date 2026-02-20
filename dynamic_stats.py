@@ -2,10 +2,8 @@ import requests
 from selenium import webdriver
 from selenium_stealth import stealth
 from selenium.webdriver.chrome.options import Options
-from bs4 import BeautifulSoup
 import whois
 from datetime import datetime, timezone
-from urllib.parse import urlparse
 import time
 import tldextract
 from selenium.webdriver.common.by import By
@@ -25,6 +23,11 @@ def response_length(response):
     if response == -1:
         return -1
     return len(response.text)
+
+def history_length(response):
+    if response == -1:
+        return -1
+    return len(response.history)
 
 def server(response):
     if response == -1:
@@ -110,16 +113,17 @@ def img(driver):
     except:
         return 0
     
-def suspicious_keywords(driver, keywords):
-    if driver == -1:
+def suspicious_keywords(driver, keywords, response):
+    if response == -1 or driver == -1:
         return -1
+    length = len(response.text)
     keywords = keywords.lower().splitlines()
     page_text = driver.page_source.lower()
     found = 0
     for word in keywords:
         if word in page_text:
             found += 1
-    return found
+    return (found / length) * 1000
 
 def whois_connect(url):
     w = -1
@@ -201,14 +205,16 @@ def features1(url, response, driver, w, score, redirected, keywords):
     "Number of password forms": password_forms(driver),
     "Number of 'text' forms": text_forms(driver),
     "Number of hidden elements": hidden(driver),
-    "Number of suspicious keywords": suspicious_keywords(driver, keywords),
+    "Number of suspicious keywords / response length": suspicious_keywords(driver, keywords, response),
     "Domain age in days": domain_days(w),
     "Domain expires in ? days": expiration_time(w),
     "Number of images": img(driver),
     "Was redirected": redirected,
     "Number of links in HTML": links(driver),
     "Number of external links": external_links(driver, url),
+    "History length (number of redirections)": history_length(response)
     }
     return features
+
 
 
