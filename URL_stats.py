@@ -43,7 +43,10 @@ def check_latin(url):
 
 def check_whitelist(url, data):
     ext = tldextract.extract(url)
-    url = ext.domain + "." + ext.suffix
+    if ext.subdomain !="":
+        url = ext.subdomain + "." + ext.domain + "." + ext.suffix
+    else:
+        url = ext.domain + "." + ext.suffix
     if url in data:
         return 1
     return 0
