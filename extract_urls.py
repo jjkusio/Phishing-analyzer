@@ -2,10 +2,29 @@ from main import final_function, connection_1, data, sql
 with open("columns.txt", "r") as f:
     columns = f.read().splitlines()
 c, conn = sql(columns)
-driver = connection_1()
+try: 
+    driver = connection_1()
+except Exception as s:
+    print(s)
+    raise
+count = 0
+failed = 0
 for element in data:
+    if count == 200:
+        driver.quit()
+        count = 0
+        try:
+            driver = connection_1()
+        except Exception as s:
+            print(s)
+            raise
     try:
         driver.get(element)
+    except Exception as s:
+        failed +=1
+        print(s) 
+        continue
+    try:
         result = final_function(element, driver)
         keys = ", ".join([f'"{k}"' for k in result.keys()])
         placeholders = ", ".join(["?"] * len(result))
@@ -14,6 +33,9 @@ for element in data:
         c.execute(sql, [element] + values)
     except Exception as e:
         print("Error:", e)
+    count +=1
+
+print("Failed selenium connections:", failed)
 conn.commit()
 conn.close()
 driver.quit()
