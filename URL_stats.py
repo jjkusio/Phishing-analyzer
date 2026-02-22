@@ -120,13 +120,28 @@ def check_distance(url, data):
 
 def is_free_hosting(url):
     free_hosts = [
-        "weebly.com", "wixsite.com", "wordpress.com", "github.io", "freehostia.com",
-        "000webhostapp.com", "bravesites.com", "jimdosite.com", "webnode.com",
-        "vercel.app", "netlify.app", "herokuapp.com", "firebaseapp.com", 
-        "web.app", "pages.dev", "glitch.me", "onrender.com", "azurewebsites.net",
-        "forms.gle", "typeform.com", "jotform.com", "survey-smiles.com",
-        "s3.amazonaws.com", "storage.googleapis.com", "sharepoint.com", "blob.core.windows.net",
-        ]
+    "weebly.com", "wixsite.com", "wix.com", "wordpress.com", "wordpress.org",
+    "squarespace.com", "jimdo.com", "jimdosite.com", "jimdofree.com",
+    "webnode.com", "webflow.io", "strikingly.com", "yolasite.com",
+    "site123.me", "mystrikingly.com", "bravesites.com", "simplesite.com",
+    "lovable.app", "framer.app", "framer.site",
+    "github.io", "gitlab.io", "vercel.app", "netlify.app", "netlify.com",
+    "herokuapp.com", "onrender.com", "render.com", "railway.app",
+    "glitch.me", "replit.dev", "repl.co", "pages.dev", "workers.dev",
+    "web.app", "firebaseapp.com", "azurewebsites.net", "azurestaticapps.net",
+    "pythonanywhere.com", "fly.dev", "deta.app", "surge.sh",
+    "000webhostapp.com", "freehostia.com", "infinityfree.net",
+    "blogspot.com", "sites.google.com", "forms.gle", "docs.google.com",
+    "typeform.com", "jotform.com", "surveysparrow.com", "cognito.com",
+    "survey-smiles.com", "paperform.co", "tally.so",
+    "s3.amazonaws.com", "storage.googleapis.com", "blob.core.windows.net",
+    "sharepoint.com", "onedrive.live.com", "dropbox.com",
+    "ddns.net", "dyndns.org", "no-ip.com", "noip.com", "changeip.com",
+    "freedns.afraid.org", "dynv6.com", "eu.org",
+    "000webhost.com", "byethost.com", "freehosting.com", "awardspace.com",
+    "t35.com", "ripway.com", "xtgem.com", "ucoz.com", "ucoz.net",
+    "hostinger.com", "x10host.com", "biz.nf", "co.nf",
+]
     for host in free_hosts:
         if host in url:
             return 1
