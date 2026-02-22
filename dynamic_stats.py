@@ -43,8 +43,6 @@ def server(response):
     return 0
 
 def forms(driver):
-    if driver == -1:
-        return None
     try:
         forms = driver.find_elements("tag name", "form")
         return len(forms)
@@ -52,8 +50,6 @@ def forms(driver):
         return 0
 
 def links(driver):
-    if driver == -1:
-        return None
     try:
         links = driver.find_elements(By.TAG_NAME, 'a')
         return len(links)
@@ -61,25 +57,24 @@ def links(driver):
         return 0
     
 def external_links(driver, url):
-    if driver == -1:
-        return None
     ext2 = tldextract.extract(url)
     ext2 = ext2.domain + "." + ext2.suffix
     count = 0
-    links = driver.find_elements(By.TAG_NAME, 'a')
-    for link in links:
-        link_data = link.get_attribute('href')
-        if link_data is None or link_data.lower().startswith("http") == False:
-            continue
-        ext1 = tldextract.extract(link_data)
-        ext1 = ext1.domain + "." + ext1.suffix
-        if ext1 != ext2:    
-            count+=1
-    return count
+    try:
+        links = driver.find_elements(By.TAG_NAME, 'a')
+        for link in links:
+            link_data = link.get_attribute('href')
+            if link_data is None or link_data.lower().startswith("http") == False:
+                continue
+            ext1 = tldextract.extract(link_data)
+            ext1 = ext1.domain + "." + ext1.suffix
+            if ext1 != ext2:    
+                count+=1
+        return count
+    except:
+        return 0
 
 def password_forms(driver):
-    if driver == -1:
-        return None
     try:
         passwords = driver.find_elements("xpath", "//input[@type='password']")
         return len(passwords)
@@ -87,8 +82,6 @@ def password_forms(driver):
         return 0
 
 def text_forms(driver):
-    if driver == -1:
-        return None
     try:
         texts = driver.find_elements("xpath", "//input[@type='text']")
         return len(texts)
@@ -96,8 +89,6 @@ def text_forms(driver):
         return 0
     
 def hidden(driver):
-    if driver == -1:
-        return None
     try:
         hidden = driver.find_elements("xpath", "//input[@type='hidden']")
         return len(hidden)
@@ -105,8 +96,6 @@ def hidden(driver):
         return 0
     
 def img(driver):
-    if driver == -1:
-        return None
     try:
         images = driver.find_elements("tag name", "img")
         return len(images)
@@ -114,8 +103,8 @@ def img(driver):
         return 0
     
 def suspicious_keywords(driver, keywords, response):
-    if response == -1 or driver == -1:
-        return None
+    if response == -1:
+        return -1
     length = len(response.text)
     keywords = keywords.lower().splitlines()
     page_text = driver.page_source.lower()
