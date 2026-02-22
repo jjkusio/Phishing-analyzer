@@ -123,7 +123,10 @@ def suspicious_keywords(driver, keywords, response):
     for word in keywords:
         if word in page_text:
             found += 1
-    return (found / length) * 1000
+    if length > 0:
+        return (found / length) * 1000
+    else:
+        return 0
 
 def whois_connect(url):
     w = -1
@@ -132,35 +135,34 @@ def whois_connect(url):
     try:
         w = whois.whois(url)
         return w
-    except:
-        return -1
+    except Exception as s:
+        print(s)
+        return None
 
 
 def connection_1():
-    driver = -1
     options = webdriver.ChromeOptions()
     options.add_argument("--headless")
     options.add_experimental_option("excludeSwitches", ["enable-automation"])
     options.add_experimental_option('useAutomationExtension', False)
-    try:
-        driver = webdriver.Chrome(options=options)
-        stealth(driver,
-        languages=["en-US", "en"],
-        vendor="Google Inc.",
-        platform="Win32",
-        webgl_vendor="Intel Inc.",
-        renderer="Intel Iris OpenGL Engine",
-        fix_hairline=True,
-        )
-        time.sleep(0.8)
-        return driver
-    except:
-        return -1
+    driver = webdriver.Chrome(options=options)
+    driver.set_page_load_timetout(7)
+    stealth(driver,
+    languages=["en-US", "en"],
+    vendor="Google Inc.",
+    platform="Win32",
+    webgl_vendor="Intel Inc.",
+    renderer="Intel Iris OpenGL Engine",
+    fix_hairline=True,
+     )
+    time.sleep(0.8)
+    return driver
+
     
 
 def domain_days(w):
     if w == -1:
-        return -1
+        return None
     try:
         if isinstance(w.creation_date, list):
             creation_date = w.creation_date[0]
@@ -172,11 +174,11 @@ def domain_days(w):
         days = delta.days
         return days
     except:
-        return -1
+        return None
 
 def expiration_time(w):
     if w == -1:
-        return -1
+        return None
     try:
         if isinstance(w.expiration_date, list):
             expiration_date = w.expiration_date[0]
@@ -188,7 +190,7 @@ def expiration_time(w):
         days = delta.days
         return days
     except:
-        return -1
+        return None
 
 def features1(url, response, driver, w, score, keywords):
     features = {"SSL/Connection": score,
