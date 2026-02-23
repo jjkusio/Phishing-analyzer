@@ -30,19 +30,6 @@ def history_length(response):
         return None
     return len(response.history)
 
-def server(response):
-    if response == -1:
-        return None
-    try:
-        server = response.headers.get('Server')
-        if server.lower() == "let's encrypt":
-            return 1
-        elif server.lower() == 'cloudflare':
-            return 1
-    except:
-        return 0
-    return 0
-
 def domain_change(response, url):
     if response == -1:
         return None
