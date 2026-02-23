@@ -7,6 +7,7 @@ from datetime import datetime, timezone
 import time
 import tldextract
 from selenium.webdriver.common.by import By
+import nltk
 
 
 def connection(url):
@@ -42,6 +43,20 @@ def server(response):
         return 0
     return 0
 
+def domain_change(response, url):
+    if response == -1:
+        return None
+    try:
+        ext1 = tldextract.extract(response.url)
+        ext2 = tldextract.extract(url)
+        if (ext1.domain + "." + ext1.suffix != ext2.domain +"." + ext2.suffix):
+            return 1
+        else:
+            return 0
+    except:
+        return 0
+
+        
 def forms(driver):
     try:
         forms = driver.find_elements("tag name", "form")
@@ -101,6 +116,24 @@ def img(driver):
         return len(images)
     except:
         return 0
+    
+def iframe(driver):
+    try:
+        iframe = driver.find_elements("tag name", "iframe")
+        return len(iframe)
+    except:
+        return 0
+    
+def title_vs_domain(driver, url):
+    try:
+        ext = tldextract.extract(url)
+        domain = ext.domain
+        title = driver.title
+        distance = nltk.distance(title, domain)
+        return distance
+    except:
+        return None
+
     
 def suspicious_keywords(driver, keywords, response):
     if response == -1:
@@ -191,6 +224,7 @@ def features1(url, response, driver, w, score, keywords,  available):
     "Number of password forms": password_forms(driver),
     "Number of 'text' forms": text_forms(driver),
     "Number of hidden elements": hidden(driver),
+    "Number of iframe": iframe(driver),
     "Number of suspicious keywords / response length": suspicious_keywords(driver, keywords, response),
     "Domain age in days": domain_days(w),
     "Domain expires in ? days": expiration_time(w),
@@ -198,9 +232,7 @@ def features1(url, response, driver, w, score, keywords,  available):
     "Number of links in HTML": links(driver),
     "Number of external links": external_links(driver, url),
     "History length (number of redirections)": history_length(response),
-    "whois  available":  available
+    "whois available":  available,
+    "domain changed": domain_change(response, url)
     }
     return features
-
-
-
