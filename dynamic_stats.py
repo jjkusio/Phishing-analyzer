@@ -11,7 +11,7 @@ import nltk
 
 
 def connection(url):
-    response = -1
+    response = None
     try:
         response = requests.get(url, timeout=3, allow_redirects=True)
     except requests.exceptions.SSLError:
@@ -123,8 +123,8 @@ def title_vs_domain(driver, url):
 
     
 def suspicious_keywords(driver, keywords, response):
-    if response == -1:
-        return -1
+    if response == None:
+        return None
     length = len(response.text)
     keywords = keywords.lower().splitlines()
     page_text = driver.page_source.lower()
@@ -157,7 +157,7 @@ def connection_1():
     options.add_experimental_option("excludeSwitches", ["enable-automation"])
     options.add_experimental_option('useAutomationExtension', False)
     driver = webdriver.Chrome(options=options)
-    driver.set_page_load_timeout(7)
+    driver.set_page_load_timeout(5)
     stealth(driver,
     languages=["en-US", "en"],
     vendor="Google Inc.",
@@ -220,6 +220,7 @@ def features1(url, response, driver, w, score, keywords,  available):
     "Number of external links": external_links(driver, url),
     "History length (number of redirections)": history_length(response),
     "whois available":  available,
-    "domain changed": domain_change(response, url)
+    "domain changed": domain_change(response, url),
+    "is_phish": 1
     }
     return features
