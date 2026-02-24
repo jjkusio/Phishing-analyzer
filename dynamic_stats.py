@@ -21,17 +21,27 @@ def connection(url):
     return response, 0
     
 def response_length(response):
-    if response == -1:
+    if response == None:
         return None
     return len(response.text)
 
 def history_length(response):
-    if response == -1:
+    if response == None:
         return None
     return len(response.history)
 
+def text_to_html_ratio(response, driver):
+    if response == None:
+        return None
+    try:
+        html = len(response.text)
+        text = len(driver.find_element("tag name", "body").text)
+        return text/html
+    except:
+        return None
+
 def domain_change(response, url):
-    if response == -1:
+    if response == None:
         return None
     try:
         ext1 = tldextract.extract(response.url)
@@ -41,7 +51,7 @@ def domain_change(response, url):
         else:
             return 0
     except:
-        return 0
+        return None
 
         
 def forms(driver):
@@ -49,14 +59,21 @@ def forms(driver):
         forms = driver.find_elements("tag name", "form")
         return len(forms)
     except:
-        return 0
+        return None
+    
+def scripts(driver):
+    try:
+        scripts = driver.find_elements("tag name", "script")
+        return len(scripts)
+    except:
+        return None
 
 def links(driver):
     try:
         links = driver.find_elements(By.TAG_NAME, 'a')
         return len(links)
     except:
-        return 0
+        return None
     
 def external_links(driver, url):
     ext2 = tldextract.extract(url)
@@ -74,49 +91,49 @@ def external_links(driver, url):
                 count+=1
         return count
     except:
-        return 0
+        return None
 
 def password_forms(driver):
     try:
         passwords = driver.find_elements("xpath", "//input[@type='password']")
         return len(passwords)
     except:
-        return 0
+        return None
 
 def text_forms(driver):
     try:
         texts = driver.find_elements("xpath", "//input[@type='text']")
         return len(texts)
     except:
-        return 0
+        return None
     
 def hidden(driver):
     try:
         hidden = driver.find_elements("xpath", "//input[@type='hidden']")
         return len(hidden)
     except:
-        return 0
+        return None
     
 def img(driver):
     try:
         images = driver.find_elements("tag name", "img")
         return len(images)
     except:
-        return 0
+        return None
     
 def iframe(driver):
     try:
         iframe = driver.find_elements("tag name", "iframe")
         return len(iframe)
     except:
-        return 0
+        return None
     
 def title_vs_domain(driver, url):
     try:
         ext = tldextract.extract(url)
         domain = ext.domain
         title = driver.title
-        distance = nltk.distance(title, domain)
+        distance = nltk.edit_distance(title, domain)
         return distance
     except:
         return None
@@ -135,7 +152,7 @@ def suspicious_keywords(driver, keywords, response):
     if length > 0:
         return (found / length) * 1000
     else:
-        return 0
+        return None
 
 def whois_connect(url):
     available = 1
@@ -206,12 +223,14 @@ def expiration_time(w):
 def features1(url, response, driver, w, score, keywords,  available):
     features = {"SSL/Connection": score,
     "Response length": response_length(response),
-    "Suspicious server": server(response),
     "Number of forms": forms(driver),
     "Number of password forms": password_forms(driver),
     "Number of 'text' forms": text_forms(driver),
     "Number of hidden elements": hidden(driver),
+    "Title vs domain": title_vs_domain(driver, url),
+    "Text to html ratio": text_to_html_ratio(response, driver),
     "Number of iframe": iframe(driver),
+    "Number of scripts": scripts(driver),
     "Number of suspicious keywords / response length": suspicious_keywords(driver, keywords, response),
     "Domain age in days": domain_days(w),
     "Domain expires in ? days": expiration_time(w),
