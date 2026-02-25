@@ -10,6 +10,7 @@ from selenium.webdriver.common.by import By
 import nltk
 
 
+
 def connection(url):
     response = None
     try:
@@ -171,10 +172,8 @@ def whois_connect(url):
 def connection_1():
     options = webdriver.ChromeOptions()
     options.add_argument("--headless")
-    options.add_experimental_option("excludeSwitches", ["enable-automation"])
-    options.add_experimental_option('useAutomationExtension', False)
     driver = webdriver.Chrome(options=options)
-    driver.set_page_load_timeout(5)
+    driver.set_page_load_timeout(10)
     stealth(driver,
     languages=["en-US", "en"],
     vendor="Google Inc.",
@@ -183,7 +182,7 @@ def connection_1():
     renderer="Intel Iris OpenGL Engine",
     fix_hairline=True,
      )
-    time.sleep(0.8)
+    time.sleep(1.5)
     return driver
 
     

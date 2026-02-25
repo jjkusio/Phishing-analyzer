@@ -9,8 +9,8 @@ except Exception as s:
     raise
 count = 0
 failed = 0
-for element in data:
-    if count == 200:
+for element in data["url"]:
+    if count == 75:
         driver.quit()
         count = 0
         try:
@@ -23,6 +23,15 @@ for element in data:
     except Exception as s:
         failed +=1
         print(s) 
+        try:
+            driver.quit()
+        except:
+            pass
+        try: 
+            driver = connection_1()
+        except:
+            print("Restart failed")
+            break
         continue
     try:
         result = final_function(element, driver)

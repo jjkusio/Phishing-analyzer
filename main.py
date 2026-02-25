@@ -27,7 +27,6 @@ data = data.drop_duplicates()
 dd = pd.read_csv("top500Domains.csv", usecols=["Root Domain"])
 popular_domains = set(dd["Root Domain"])
 
-driver = connection_1()
 def final_function(url, driver):
         response, score = connection(url)
         w,  available = whois_connect(url)
