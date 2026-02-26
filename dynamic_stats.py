@@ -184,7 +184,7 @@ def connection_1():
     renderer="Intel Iris OpenGL Engine",
     fix_hairline=True,
      )
-    time.sleep(1.5)
+    time.sleep(1.8)
     return driver
 
     
@@ -241,6 +241,6 @@ def features1(url, response, driver, w, score, keywords,  available):
     "History length (number of redirections)": history_length(response),
     "whois available":  available,
     "domain changed": domain_change(response, url),
-    "is_phish": 1
+    "is_phish": 0
     }
     return features
