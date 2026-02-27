@@ -1,4 +1,6 @@
 from main import final_function, connection_1, data, sql
+import time
+
 with open("columns.txt", "r") as f:
     columns = f.read().splitlines()
 c, conn = sql(columns)
@@ -9,7 +11,8 @@ except Exception as s:
     raise
 count = 0
 failed = 0
-for element in data["url"]:
+for element in data[1]:
+    time.sleep(1.5)
     if count == 75:
         driver.quit()
         count = 0
