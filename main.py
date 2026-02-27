@@ -22,7 +22,7 @@ def sql(columns):
 with open("spam.txt", "r", encoding="utf-8") as f:
         keywords = f.read()
 
-data = pd.read_csv("top-1m.csv", usecols=1, nrows=19000)
+data = pd.read_csv("top-1m.csv", header=None, usecols=[1], nrows=19000)
 data = data.drop_duplicates()
 data[1] = "https://" + data[1]
 dd = pd.read_csv("top500Domains.csv", usecols=["Root Domain"])
