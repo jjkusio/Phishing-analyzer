@@ -4,9 +4,10 @@ import tldextract
 from collections import Counter
 from math import log
 import nltk
+import os
 
-dd = pd.read_csv("top500Domains.csv", usecols=["Root Domain"])
-popular_domains = set(dd["Root Domain"])
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+dd = pd.read_csv(os.path.join(BASE_DIR, "top500Domains.csv"), usecols=["Root Domain"])
 
 def check_http(url):
     if url.startswith("http:"):

@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 import shap
 
 
-data = pd.read_csv("data_35k.csv")
+data = pd.read_csv("training/data_35k.csv")
 data = data.drop_duplicates()
 
 dynamic = ["id", "url", "is_phish", "SSL/Connection", "Response length","Number of forms","Number of password forms","Number of 'text' forms","Number of hidden elements","Title vs domain",

@@ -19,10 +19,10 @@ whitelist = pd.read_csv("majestic_million.csv", usecols=["Domain"])
 whitelist_domains = set(whitelist['Domain'])
 
 
-with open("spam.txt", "r", encoding="utf-8") as f:
-        keywords = f.read()
+with open("data_collection/spam.txt", "r", encoding="utf-8") as f:
+    keywords = f.read()
 driver = connection_1()
-dd = pd.read_csv("top500Domains.csv", usecols=["Root Domain"])
+dd = pd.read_csv("features/top500Domains.csv", usecols=["Root Domain"])
 popular_domains = set(dd["Root Domain"])
 
 url = input("Enter URL:")
