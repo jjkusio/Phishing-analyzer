@@ -1,4 +1,12 @@
-.env
-venv/
+*.csv
+*.db
+*.gz
+*.txt
+*.json
+*.pkl
+*.png
 __pycache__/
+*.pyc
+.venv/
+venv/
 .DS_Store

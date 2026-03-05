@@ -1,11 +1,11 @@
 from URL_stats import features
-from dynamic_stats import features1, connection, connection_1, whois_connect
+from dynamic_stats import features1, connection, whois_connect
 import pandas as pd
 import sqlite3
 
 
 def sql(columns):
-    conn = sqlite3.connect("data1.db")
+    conn = sqlite3.connect("data5.db")
     c = conn.cursor()
     columns_sql = ", ".join([f'"{col}" TEXT' for col in columns])
     sql_ = f"""
@@ -22,9 +22,10 @@ def sql(columns):
 with open("spam.txt", "r", encoding="utf-8") as f:
         keywords = f.read()
 
-data = pd.read_csv("majestic_million.csv", header=None, usecols=[2], skiprows=200000, nrows=5000)
+data = pd.read_csv("legit_urls.csv", header=None, nrows=20000)
 data = data.drop_duplicates()
-data[2] = "https://" + data[2]
+data = "https://" + data[0]
+
 dd = pd.read_csv("top500Domains.csv", usecols=["Root Domain"])
 popular_domains = set(dd["Root Domain"])
 
