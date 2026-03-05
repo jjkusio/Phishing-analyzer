@@ -33,4 +33,4 @@ model = xgb.XGBClassifier(
     random_state = 42,
 )
 model.fit(X_train, y_train)
-model.save_model("static_model.json")
+model.save_model("models/static_model.json")

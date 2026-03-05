@@ -19,6 +19,6 @@ df_10, df_test = train_test_split(
     random_state=42
 )
 
-df_35.to_csv("data_35k.csv", index=False)
-df_10.to_csv("data_10k.csv", index=False)
-df_test.to_csv("data_test.csv", index=False)
+df_35.to_csv("training/data_35k.csv", index=False)
+df_10.to_csv("training/data_10k.csv", index=False)
+df_test.to_csv("training/data_test.csv", index=False)

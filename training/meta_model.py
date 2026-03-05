@@ -6,8 +6,10 @@ from sklearn.metrics import classification_report, confusion_matrix
 import xgboost as xgb
 from sklearn.linear_model import LogisticRegression
 import pickle
+from sklearn.metrics import RocCurveDisplay
+import matplotlib.pyplot as plt
 
-data = pd.read_csv("data_10k.csv")
+data = pd.read_csv("training/data_10k.csv")
 data = data.drop_duplicates()
 
 static_model = xgb.XGBClassifier()
@@ -45,7 +47,7 @@ model = xgb.XGBClassifier(
 )
 model.fit(X_meta, y)
 
-data_test = pd.read_csv("data_test.csv")
+data_test = pd.read_csv("training/data_test.csv")
 data_test = data_test.drop_duplicates()
 
 y_test = data_test["is_phish"]

@@ -1,6 +1,6 @@
 import xgboost as xgb
-from URL_stats import features
-from dynamic_stats import features1, connection, whois_connect, connection_1
+from features.URL_stats import features
+from features.dynamic_stats import features1, connection, whois_connect, connection_1
 import pandas as pd
 import tldextract
 from colorama import init, Fore, Style

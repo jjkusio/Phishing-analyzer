@@ -7,7 +7,7 @@ import xgboost as xgb
 import shap
 import matplotlib.pyplot as plt
 
-data = pd.read_csv("data_35k.csv")
+data = pd.read_csv("training/data_35k.csv")
 data = data.drop_duplicates()
 
 static = ["id", "url", "is_phish", "HTTP",
