@@ -12,8 +12,8 @@ data = data.drop_duplicates()
 
 static_model = xgb.XGBClassifier()
 dynamic_model = xgb.XGBClassifier()
-static_model.load_model("static_model.json")
-dynamic_model.load_model("dynamic_model.json")
+static_model.load_model("models/static_model.json")
+dynamic_model.load_model("models/dynamic_model.json")
 
 dynamic = ["id", "url", "is_phish", "SSL/Connection", "Response length","Number of forms","Number of password forms","Number of 'text' forms","Number of hidden elements","Title vs domain",
 "Text to html ratio","Number of iframe","Number of scripts","Number of suspicious keywords / response length","Domain age in days",
@@ -86,6 +86,6 @@ print("False positives:",matrix[0][1])
 print("False negatives:",matrix[1][0])
 
 
-model.save_model("meta_model_1.json")
-with open("meta_model_lr.pkl", "wb") as f:
+model.save_model("models/meta_model_1.json")
+with open("models/meta_model_lr.pkl", "wb") as f:
     pickle.dump(model_lr, f)

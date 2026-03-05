@@ -15,7 +15,7 @@ def check_http(url):
 
 def check_length(url):
     ext = tldextract.extract(url)
-    return len(ext)
+    return len(ext.domain)
        
 
 def check_tld(url):
@@ -177,6 +177,7 @@ def is_shortened(url):
     
 def features(url, pop):
     features = {"HTTP": check_http(url),
+    "URL Length": check_length(url),
     "Popular tld in URL": check_tld(url),
     "IP": check_ip(url),
     "Non-latin characters": check_latin(url),

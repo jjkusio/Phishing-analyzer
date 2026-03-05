@@ -8,7 +8,7 @@ data = data.drop_duplicates()
 
 df_35, df_temp = train_test_split(
     data,
-    train_size=83000,
+    train_size=82900,
     stratify=data["is_phish"],
     random_state=42
 )

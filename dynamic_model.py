@@ -26,7 +26,6 @@ static = ["id", "url", "is_phish", "HTTP",
 "Free Hosting",
 "URL is shortened"]
 
-
 X_train = data.drop(columns=static)
 y_train = data["is_phish"]
 
@@ -40,4 +39,4 @@ model = xgb.XGBClassifier(
     random_state = 42,
 )
 model.fit(X_train, y_train)
-model.save_model("dynamic_model.json")
+model.save_model("models/dynamic_model.json")

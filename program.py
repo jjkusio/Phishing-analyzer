@@ -8,12 +8,12 @@ import pickle
 
 
 static_model = xgb.XGBClassifier()
-static_model.load_model("static_model.json")
+static_model.load_model("models/static_model.json")
 dynamic_model = xgb.XGBClassifier()
-dynamic_model.load_model("dynamic_model.json")
+dynamic_model.load_model("models/dynamic_model.json")
 model_xgb = xgb.XGBClassifier()
-model_xgb.load_model("meta_model_1.json")
-with open("meta_model_lr.pkl", "rb") as f:
+model_xgb.load_model("models/meta_model_1.json")
+with open("models/meta_model_lr.pkl", "rb") as f:
     model = pickle.load(f)
 whitelist = pd.read_csv("majestic_million.csv", usecols=["Domain"])
 whitelist_domains = set(whitelist['Domain'])
