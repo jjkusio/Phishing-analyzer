@@ -17,6 +17,7 @@ dynamic = ["id", "url", "is_phish", "SSL/Connection", "Response length","Number 
 "History length (number of redirections)","whois available","domain changed", "Free Hosting"]
 
 X_train = data.drop(columns=dynamic )
+print(list(X_train))
 y_train = data["is_phish"]
 
 model = xgb.XGBClassifier(

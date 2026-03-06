@@ -55,8 +55,8 @@ domain = full_domain.lower().removeprefix("www.")
 domain1 = full_domain1.lower().removeprefix("www.")
 
 is_whitelist = False
-if (domain in whitelist_domains or domain1 in whitelist_domains):
-        is_whitelist = True
+#if (domain in whitelist_domains or domain1 in whitelist_domains):
+#        is_whitelist = True
 for element in shorteners_list:
       if element in domain:
             is_whitelist = False

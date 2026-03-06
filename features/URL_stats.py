@@ -45,7 +45,7 @@ def check_shannon_entropy(url):
     if ext.subdomain:
         url = ext.subdomain + "." + ext.domain
     else:
-         url = ext.subdomain 
+         url = ext.domain 
     counts = Counter(url)
     frequencies = ((i / len(url)) for i in counts.values())
     result = -sum(f * log(f, 2) for f in frequencies)
@@ -186,10 +186,10 @@ def features(url, pop):
     "@ in url": check_at(url),
     "Suspicious characters": check_characters(url),
     "Digits": check_numbers(url),
+    "Subdomains": check_subdomains(url),
     "Sus domains": check_sus_domains(url),
-    "Subdomains": check_keywords(url),
+    "Number of phishing words": check_keywords(url),
     "Levenshtein Distance": check_distance(url,pop),
-    "Free Hosting": is_free_hosting(url),
     "URL is shortened": is_shortened(url)
     }
     return features
