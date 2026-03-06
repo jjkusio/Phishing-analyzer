@@ -58,18 +58,24 @@ The initial version required the user to be compatible with my settings, manuall
 ```
 docker build -t phishing-analyzer .
 ```
+```
+docker run -it phishing-analyzer
+```
 There is a possibility that the Docker (on Windows) due to Chrome usage will consume a lot of RAM. To prevent this you can make a .wslconfig file in your home directory with:
 ```
 [wsl2]
 memory=3GB
 processors=2
 ```
-## Usage
 
+## Run without Docker
 ```
-docker run -it phishing-analyzer
+git clone https://github.com/jjkusio/Phishing-analyzer.git
+cd Phishing-analyzer
+pip install -r requirements.txt
+python program.py
 ```
-
+Requirements: Python 3.10+, Google Chrome, ChromeDriver matching your Chrome version, Majestic Million CSV file (you have to download it by yourself) https://majestic.com/reports/majestic-million
 ## Example outputs:
 ```
 Enter URL: https://ipkobizness.pl-radiant.info/ipko.php
