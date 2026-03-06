@@ -104,4 +104,4 @@ Majestic Million (whitelist) covers popularity, not safety.
 Dynamic analysis adds 5–10 seconds per URL due to Selenium and WHOIS load.
 
 
-Author: Jan Kusiowski
+## Author: Jan Kusiowski
