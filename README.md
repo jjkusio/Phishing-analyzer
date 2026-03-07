@@ -49,9 +49,6 @@ I did a test based on 8k URLS (50% phish and 50% safe)
 ![Static SHAP](plots/static_feature_importance.png)
 ### Dynamic
 ![Dynamic SHAP](plots/dynamic_feature_importance.png)
-### ROC Curve
-![ROC Curve](plots/roc_curve.png)
-
 
 ## Run with Docker
 The initial version required the user to be compatible with my settings, manually download files, etc. To prevent this, I decided to use Docker to streamline the process.
