@@ -10,3 +10,6 @@ __pycache__/
 .venv/
 venv/
 .DS_Store
+
+!data_collection/spam.txt
+!features/top500Domains.csv
