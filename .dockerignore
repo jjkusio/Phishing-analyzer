@@ -1,0 +1,13 @@
+*
+!api.py
+!features/URL_stats.py
+!features/dynamic_stats.py
+!models/static_model.json
+!models/dynamic_model.json
+!models/meta_model_1.json
+!models/meta_model_lr.pkl
+!requirements.txt
+!majestic_million.csv
+!data_collection/spam.txt
+!features/top500Domains.csv
+!features/__init__.py
