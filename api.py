@@ -5,7 +5,6 @@ from features.URL_stats import features
 from features.dynamic_stats import features1, connection, whois_connect, connection_1
 import pandas as pd
 import tldextract
-from colorama import init, Fore, Style
 import pickle
 import re
 import socket
@@ -54,8 +53,11 @@ def info(url: Url):
     Meta_X = None
     Meta_Lr = None
     url = url.url
+<<<<<<< HEAD
     if not url.startswith(("http://", "https://")):
         raise HTTPException(status_code=403, detail="Server refused to answer")
+=======
+>>>>>>> 23a8abd (new docker test)
     ip = re.search(r'(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})',url)
     if ip:
         raise HTTPException(status_code=403, detail="Server refused to answer")
@@ -70,7 +72,11 @@ def info(url: Url):
     urel = extracting(url)
     try:
         ip_from_url = socket.gethostbyname(urel)
+<<<<<<< HEAD
     except socket.gaierror:
+=======
+    except:
+>>>>>>> 23a8abd (new docker test)
         raise HTTPException(status_code=400, detail="Cannot resolve a hostname")
     def safety_check(url):
         is_private = ipaddress.IPv4Address(url).is_private
@@ -89,7 +95,11 @@ def info(url: Url):
             urel = extracting(urel)
             try:
                 ip_from_url = socket.gethostbyname(urel)
+<<<<<<< HEAD
             except socket.gaierror:
+=======
+            except:
+>>>>>>> 23a8abd (new docker test)
                 raise HTTPException(status_code=400, detail="Cannot resolve a hostname")
             priv, loop = safety_check(ip_from_url)
             if priv or loop:
@@ -129,6 +139,7 @@ def info(url: Url):
     #dynamic
     driver = connection_1()
     w,  available = whois_connect(url)
+<<<<<<< HEAD
     try:
         try:   
             driver.get(url)
@@ -151,6 +162,28 @@ def info(url: Url):
                 raise HTTPException(status_code = 500, detail="Internal Server Error")
     finally:
         driver.quit()
+=======
+    try:   
+        driver.get(url)
+    except:
+        driver.quit()
+        raise HTTPException(status_code = 504, detail="Gateway Timeout")
+    valid = True
+    dynamic_results = features1(url, response, driver, w, score, keywords,  available)
+    data = pd.DataFrame([dynamic_results])
+    data = data.apply(pd.to_numeric, errors='coerce')
+    y_proba2 = dynamic_model.predict_proba(data)[:,1]
+
+
+    #meta model
+    X = pd.DataFrame({
+        "static_model": y_proba,
+        "dynamic_model": y_proba2
+    })
+    meta_proba = model.predict_proba(X)[:,1]
+    meta_proba_xgb = model_xgb.predict_proba(X)[:,1]
+    driver.quit()
+>>>>>>> 23a8abd (new docker test)
     static = y_proba
     Dynamic = y_proba2
     Meta_X = meta_proba_xgb
