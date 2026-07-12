@@ -1,4 +1,4 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Request
 from pydantic import BaseModel
 import xgboost as xgb
 from features.URL_stats import features
@@ -10,6 +10,9 @@ import re
 import socket
 import ipaddress
 import urllib3
+from slowapi import Limiter, _rate_limit_exceeded_handler
+from slowapi.util import get_remote_address
+from slowapi.errors import RateLimitExceeded
 
 shorteners_list = [
     "bit.ly", "bitly.kr", "bl.ink", "buff.ly", "clicky.me", "cutt.ly",
@@ -47,9 +50,12 @@ app = FastAPI()
 class Url(BaseModel):
     url: str
 
-
+limiter = Limiter(key_func=get_remote_address)
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 @app.post("/v1/analyze")
-def info(url: Url):
+@limiter.limit("10/minute")
+def info(url: Url, request: Request):
     valid = False
     is_whitelist = False
     static = None
@@ -62,10 +68,6 @@ def info(url: Url):
     if not url.startswith(("http://", "https://")):
         raise HTTPException(status_code=403, detail="Server refused to answer")
 
-    ip = re.search(r"(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})", url)
-    if ip:
-        raise HTTPException(status_code=403, detail="Server refused to answer")
-
     def extracting(url):
         domena = tldextract.extract(url)
         if domena.subdomain:
@@ -73,8 +75,11 @@ def info(url: Url):
         else:
             urel = domena.domain + "." + domena.suffix
         return urel
-
+    
     urel = extracting(url)
+    ip = re.search(r"(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})", urel)
+    if ip:
+        raise HTTPException(status_code=403, detail="Server refused to answer")
 
     try:
         ip_from_url = socket.gethostbyname(urel)
@@ -91,10 +96,27 @@ def info(url: Url):
     if private or loopback:
         raise HTTPException(status_code=403, detail="Server refused to answer")
 
-    url = url.replace("www.", "", 1)
+    ext = tldextract.extract(url)
+    root_domain = (ext.domain + "." + ext.suffix).lower()
+    if root_domain in whitelist_domains:
+        if not ext.subdomain or ext.subdomain == "www":
+            is_whitelist = True
+    if root_domain in shorteners_list:
+        is_whitelist = False
+
+
+    if is_whitelist:
+        return {
+            "Valid": True,
+            "Whitelist": is_whitelist,
+            "Static": static,
+            "Dynamic": Dynamic,
+            "Meta_XGB": Meta_X,
+            "Meta_LR": Meta_Lr,
+        }
+
 
     response, score = connection(url)
-
     if response:
         if len(response.history) > 0:
             urel = response.url
@@ -109,36 +131,7 @@ def info(url: Url):
             if priv or loop:
                 raise HTTPException(status_code=403, detail="Server refused to answer")
 
-    ext = tldextract.extract(url)
-    root_domain = (ext.domain + "." + ext.suffix).lower()
 
-    if ext.subdomain:
-        full_domain = ext.subdomain + "." + ext.domain + "." + ext.suffix
-        full_domain1 = ext.subdomain + "." + ext.domain
-    else:
-        full_domain = root_domain
-        full_domain1 = ext.domain
-
-    domain = full_domain.lower().removeprefix("www.")
-    domain1 = full_domain1.lower().removeprefix("www.")
-
-    if domain in whitelist_domains or domain1 in whitelist_domains:
-        is_whitelist = True
-
-    for element in shorteners_list:
-        if element in domain:
-            is_whitelist = False
-            break
-
-    if is_whitelist:
-        return {
-            "Valid": valid,
-            "Whitelist": is_whitelist,
-            "Static": static,
-            "Dynamic": Dynamic,
-            "Meta_XGB": Meta_X,
-            "Meta_LR": Meta_Lr,
-        }
 
     # static
     static_results = features(url, popular_domains)
@@ -147,12 +140,13 @@ def info(url: Url):
 
     # dynamic
     driver = connection_1()
-    w, available = whois_connect(url)
-
+    
     try:
         try:
             driver.get(url)
-        except:
+            w, available = whois_connect(url)
+        except Exception as s:
+            print(s)
             raise HTTPException(status_code=504, detail="Gateway Timeout")
 
         try:
@@ -175,7 +169,8 @@ def info(url: Url):
             meta_proba = model.predict_proba(X)[:, 1]
             meta_proba_xgb = model_xgb.predict_proba(X)[:, 1]
 
-        except:
+        except Exception as s:
+            print(s)
             raise HTTPException(status_code=500, detail="Internal Server Error")
 
     finally:
