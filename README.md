@@ -89,18 +89,18 @@ Takes a URL, returns the phishing probability from every model in the ensemble.
 ```
 curl -X POST http://localhost:8000/v1/analyze \
   -H "Content-Type: application/json" \
-  -d '{"url": "https://ipkobizness.pl-radiant.info/ipko.php"}'
+  -d '{"url": "https://solvro.pl"}'
 ```
 
 ```json
 {
-  "url": "https://ipkobizness.pl-radiant.info/ipko.php",
-  "valid": true,
-  "static": 99.02,
-  "dynamic": 86.09,
-  "meta_xgb": 99.31,
-  "meta_lr": 99.13
-}
+"Valid":true,
+"Whitelist":false,
+"Static":"11.82%",
+"Dynamic":"28.06%",
+"Meta_XGB":"33.20%",
+"Meta_LR":"23.13%"
+}      
 ```
 
 A whitelisted domain skips feature extraction completely:
