@@ -11,4 +11,7 @@
 !data_collection/spam.txt
 !features/top500Domains.csv
 !features/__init__.py
+!tests/
+!tests/**
+
 
