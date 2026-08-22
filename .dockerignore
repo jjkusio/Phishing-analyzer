@@ -1,5 +1,7 @@
 *
 !api.py
+!features/
+!features/**
 !features/URL_stats.py
 !features/dynamic_stats.py
 !models/static_model.json
