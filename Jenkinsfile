@@ -76,6 +76,11 @@ pipeline{
                 '''
             }
         }
+        stage("Tag ACR"){
+            steps{
+                sh 'docker tag phishing-analyzer:${BUILD_NUMBER} jjkusioanalyzeracr.azurecr.io/phishing-analyzer:${BUILD_NUMBER}'
+            }
+        }
     }
     post{
         always{
