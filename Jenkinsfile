@@ -81,6 +81,15 @@ pipeline{
                 sh 'docker tag phishing-analyzer:${BUILD_NUMBER} jjkusioanalyzeracr.azurecr.io/phishing-analyzer:${BUILD_NUMBER}'
             }
         }
+        stage("Push to ACR"){
+            steps{
+                sh '''
+                    az login --identity --output none
+                    az acr login --name jjkusioanalyzeracr
+                    docker push jjkusioanalyzeracr.azurecr.io/phishing-analyzer:${BUILD_NUMBER}
+                '''
+            }
+        }
     }
     post{
         always{
