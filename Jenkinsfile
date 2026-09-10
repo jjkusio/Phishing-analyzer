@@ -90,6 +90,25 @@ pipeline{
                 '''
             }
         }
+        stage("Test SSH to App VM") {
+    steps {
+        withCredentials([
+            sshUserPrivateKey(
+                credentialsId: 'app-vm-ssh',
+                keyFileVariable: 'SSH_KEY',
+                usernameVariable: 'SSH_USER'
+            )
+        ]) {
+            sh '''
+                ssh \
+                  -i "$SSH_KEY" \
+                  -o StrictHostKeyChecking=accept-new \
+                  "$SSH_USER"@10.0.1.4 \
+                  "echo SSH CONNECTION OK"
+            '''
+        }
+    }
+}
     }
     post{
         always{
