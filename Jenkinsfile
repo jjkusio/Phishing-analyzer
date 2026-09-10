@@ -90,7 +90,7 @@ pipeline{
                 '''
             }
         }
-        stage("Test SSH to App VM") {
+        stage("Deploy to App VM") {
     steps {
         withCredentials([
             sshUserPrivateKey(
@@ -103,8 +103,22 @@ pipeline{
                 ssh \
                   -i "$SSH_KEY" \
                   -o StrictHostKeyChecking=accept-new \
-                  "$SSH_USER"@10.0.1.4 \
-                  "echo SSH CONNECTION OK"
+                  "$SSH_USER"@10.0.1.4 "
+                    set -e
+
+                    az login --identity --output none
+                    az acr login --name jjkusioanalyzeracr
+
+                    docker pull jjkusioanalyzeracr.azurecr.io/phishing-analyzer:${BUILD_NUMBER}
+
+                    docker rm -f phishing-analyzer-prod || true
+
+                    docker run -d \
+                      --name phishing-analyzer-prod \
+                      --restart unless-stopped \
+                      -p 127.0.0.1:8081:8000 \
+                      jjkusioanalyzeracr.azurecr.io/phishing-analyzer:${BUILD_NUMBER}
+                "
             '''
         }
     }
