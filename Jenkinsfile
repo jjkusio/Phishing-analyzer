@@ -116,7 +116,7 @@ pipeline{
                     docker run -d \
                       --name phishing-analyzer-prod \
                       --restart unless-stopped \
-                      -p 127.0.0.1:8081:8000 \
+                      -p 8081:8000 \
                       jjkusioanalyzeracr.azurecr.io/phishing-analyzer:${BUILD_NUMBER}
                 "
             '''
