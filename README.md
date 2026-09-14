@@ -2,6 +2,8 @@
 
 Developed a real-time working phishing analyzer based on Four Models (stacking ensemble) - Static Model (XGBoost) Dynamic Model (XGBoost) and 2 Meta Models (XGBoost and LR) based on the predict_proba of the previous two. The analyzer runs as a FastAPI service inside a Docker container.
 
+The project also includes automated tests, a Jenkins CI/CD pipeline, deployment through Azure Container Registry to an Azure VM, and infrastructure created with Terraform.
+
 ## How does it work
 
 After giving the URL to the service, analysis and extraction of features is performed.
@@ -117,17 +119,73 @@ Error responses:
 |--------|---------|
 | 400 | Malformed URL, or a scheme other than http/https |
 | 403 | Target is not allowed (literal IP, private, loopback or link local address) |
+| 429 | Rate limit of 10 requests per minute was exceeded |
 | 504 | The site did not respond in time |
 
-Dynamic analysis takes 5 to 10 seconds per URL, so expect the request to hang for that long.
+Dynamic analysis takes 5 to 10 seconds per URL, so expect the request to hang for that long. The endpoint is limited to 10 requests per minute for each client IP.
 
 ### GET /healthz
 
-Liveness check, used by the container HEALTHCHECK.
+Liveness check, used by the container HEALTHCHECK and the Jenkins pipeline.
 
 ```
 curl http://localhost:8000/healthz
 ```
+
+## Tests
+
+The project currently contains 20 automated tests:
+
+- API tests for `/healthz`, request validation, and unsupported protocols
+- Unit tests for the static URL feature extraction
+- A Selenium test which verifies that Chromium starts and can read a page
+
+The tests can be run locally:
+
+```
+pytest -q
+```
+
+Jenkins runs the same test suite inside the newly built Docker image.
+
+## CI/CD with Jenkins
+
+The `Jenkinsfile` contains the build, test, and deployment pipeline. It:
+
+1. Checks out the `main` branch.
+2. Builds a Docker image tagged with the Jenkins build number.
+3. Runs pytest inside the image.
+4. Starts the container and waits for the Docker HEALTHCHECK.
+5. Runs an API smoke test.
+6. Pushes the tested image to Azure Container Registry.
+7. Connects to the application VM, pulls the same image version, and replaces the running container.
+8. Removes the temporary test container, including after a failed build.
+
+```mermaid
+graph LR
+A[GitHub] --> B[Jenkins]
+B --> C[Build and tests]
+C --> D[Azure Container Registry]
+D --> E[Azure App VM]
+```
+
+Using `${BUILD_NUMBER}` as the image tag makes it possible to identify and deploy the exact image that passed the tests.
+
+## Azure infrastructure with Terraform
+
+The infrastructure used by the project is stored in `infra/terraform-lab`. Terraform creates:
+
+- an Azure Resource Group in Poland Central
+- a virtual network with separate subnets for the application and Jenkins
+- an application VM and a Jenkins VM
+- Network Security Groups restricting access to SSH, Jenkins, and the API
+- Azure Container Registry
+- system-assigned managed identities for both virtual machines
+- `AcrPush` permissions for Jenkins and `AcrPull` permissions for the application VM
+
+Jenkins and the application VM authenticate to Azure Container Registry with managed identities, so registry passwords do not have to be stored in the pipeline.
+
+The Terraform files describe a personal lab environment and contain environment-specific values such as IP allowlists and SSH key paths. They should be reviewed before being used in another Azure subscription.
 
 ## Security
 
@@ -137,8 +195,9 @@ The service accepts a URL from an untrusted caller and then fetches it, which ma
 - Literal IP addresses in the URL are rejected
 - The hostname is resolved and private, loopback and link local ranges are blocked, so the cloud metadata endpoint cannot be reached
 - The final URL is validated again after redirects
+- Requests are rate limited to 10 per minute for each client IP
 
-Known residual risks that are accepted for now: DNS rebinding between the validation lookup and the fetch, and the same class of issue on the Selenium path. Both are low severity here because the API returns probabilities and never returns fetched content to the caller. The proper fix is a network layer egress policy on the container, which is planned together with the cloud deployment.
+Known residual risks that are accepted for now: DNS rebinding between the validation lookup and the fetch, and the same class of issue on the Selenium path. Both are low severity here because the API returns probabilities and never returns fetched content to the caller. The proper fix is a network layer egress policy on the container.
 
 ## Data Collection
 
@@ -157,8 +216,8 @@ The final dataset (~85,000 URLs) was split into:
 - New fresh domains can cause false positives in the model, it is difficult to distinguish phishing from safe based on features alone in such a case.
 - Dynamic analysis requires the site to be reachable.
 - Majestic Million (whitelist) covers popularity, not safety.
-- Dynamic analysis adds 5–10 seconds per URL due to Selenium and WHOIS load.
+- Dynamic analysis adds 5/10 seconds per URL due to Selenium and WHOIS load.
 - Docker can consume a lot of RAM in Windows.
-- The service is meant to be run locally for now. It is not rate limited yet, and one request occupies the browser for several seconds.
+- The rate limit is basic and one request occupies the browser for several seconds.
 
 ## Author: Jan Kusiowski
